@@ -1,0 +1,33 @@
+{
+  "name": "whatapp",
+  "version": "1.0.0",
+  "description": "Simple WhatsApp Bot",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atocchi/Whatapp.git"
+  },
+  "keywords": [
+    "WhatsApp",
+    "Bot",
+    "Twilio",
+    "Node",
+    "Express"
+  ],
+  "author": "Andrew Tocchi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/atocchi/Whatapp/issues"
+  },
+  "homepage": "https://github.com/atocchi/Whatapp#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "twilio": "^3.48.1"
+  }
+}
