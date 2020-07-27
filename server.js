@@ -6,6 +6,9 @@ const MessagingResponse = require('twilio').twiml.MessagingResponse;
 
 const PORT = 8080;
 const cors = require('cors');
+let current = '';
+let messages= [];
+
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cors());
@@ -19,9 +22,13 @@ app.listen(PORT, function(){
 })
 
 app.get('/', function (req, res) {
-    res.send("It's working");
+    res.send(`${current} - this phone `);
+}); 
+app.get('/messages', function (req, res) {
+    res.send(messages);
 }); 
 
+//This allows you to send messages back to the last person You spoke with Last
 app.post('/post', function (req, res) {
     data = req.body.post
     res.send(data);
@@ -29,17 +36,22 @@ app.post('/post', function (req, res) {
     .create({
         body: data,
         from: '+12513090755',
-        to: '+15307012179'
+        to: current
      })
     .then(message => console.log(message.sid));
 });
 
 
-
+//Main Post request, hooks into Twilio.API
 app.post('/sms', (req, res) => {
   const twiml = new MessagingResponse();
-
-  twiml.message('The Robots are coming! Head for the hills!');
+  data = req.body;
+  current = data.From;
+  messages.push({ number: current, message:  data.Body })
+  console.log(messages)
+  console.log(current);
+  console.log(req.body.Body);
+  twiml.message(`You said "${data.Body}" and you're from ${data.FromCity}, ${data.FromState} `);
 
   res.writeHead(200, {'Content-Type': 'text/xml'});
   res.end(twiml.toString());
