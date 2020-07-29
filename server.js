@@ -6,8 +6,9 @@ const MessagingResponse = require('twilio').twiml.MessagingResponse;
 
 const PORT = 8080;
 const cors = require('cors');
-let current = '';
+let current = '+15307986793';
 let messages= [];
+let past = [];
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
@@ -21,9 +22,12 @@ app.listen(PORT, function(){
     console.log(`API Server now listening on PORT ${PORT}`)
 })
 
+//get API to show the current number being conversed with
 app.get('/', function (req, res) {
     res.send(`${current} - this phone `);
 }); 
+
+//get API showing the array of Recieved Numbers and Messages
 app.get('/messages', function (req, res) {
     res.send(messages);
 }); 
@@ -46,13 +50,13 @@ app.post('/post', function (req, res) {
 app.post('/sms', (req, res) => {
   const twiml = new MessagingResponse();
   data = req.body;
+  past.push(current);
   current = data.From;
-  messages.push({ number: current, message:  data.Body })
-  console.log(messages)
+  messages.push({ number: current, message:  data.Body });
+  console.log(messages);
   console.log(current);
   console.log(req.body.Body);
   twiml.message(`You said "${data.Body}" and you're from ${data.FromCity}, ${data.FromState} `);
-
   res.writeHead(200, {'Content-Type': 'text/xml'});
   res.end(twiml.toString());
 });
