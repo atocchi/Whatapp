@@ -3,6 +3,8 @@ const express = require('express');
 const app = express();
 const axios = require('axios');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
+const dict = require('./dict.js')
+const fired = require('./fired.js')
 
 const PORT = 8080;
 const cors = require('cors');
@@ -46,6 +48,15 @@ app.post('/post', function (req, res) {
 });
 
 
+function bodyLogic(body){
+    let response = dict[body.toLowerCase()]
+    if (response == undefined){
+        response = 'Sorry No Command exists'
+    }
+    return response
+}
+
+
 //Main Post request, hooks into Twilio.API
 app.post('/sms', (req, res) => {
   const twiml = new MessagingResponse();
@@ -56,8 +67,11 @@ app.post('/sms', (req, res) => {
   console.log(messages);
   console.log(current);
   console.log(req.body.Body);
-  twiml.message(`You said "${data.Body}" and you're from ${data.FromCity}, ${data.FromState} `);
+//   twiml.message(`You said "${data.Body}" and you're from ${data.FromCity}, ${data.FromState} `);
+  fired(bodyLogic(req.body.Body)).then((response) =>{
+  twiml.message(response);
   res.writeHead(200, {'Content-Type': 'text/xml'});
   res.end(twiml.toString());
+  });
 });
 
